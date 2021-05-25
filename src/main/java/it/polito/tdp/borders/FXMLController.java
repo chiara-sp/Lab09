@@ -2,8 +2,10 @@
 package it.polito.tdp.borders;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.borders.model.Country;
 import it.polito.tdp.borders.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,6 +30,24 @@ public class FXMLController {
 
     @FXML
     void doCalcolaConfini(ActionEvent event) {
+    	txtResult.clear();
+    	int anno;
+    	try {
+    	 anno= Integer.parseInt(txtAnno.getText());
+    	}catch(NumberFormatException e) {
+    		txtResult.setText("inserire l'anno in cifre");
+    		return;
+    	}
+    	model.creaGrafo(anno);
+    	Map<Country,Integer> stati= model.statiConfinanti();
+    	txtResult.appendText("Grafo creato con "+model.numVertici()+ " vertici e "+model.numArchi()+ " archi \n");
+    	txtResult.appendText("Elenco stati con numero stati confinanti: \n");
+    	for(Country c: stati.keySet()) {
+    		txtResult.appendText(c.getName()+ " "+ stati.get(c)+"\n");
+    	}
+    	txtResult.appendText("\n Numero di componenti connesse: "+model.numeroComponentiConnesse());
+    	
+    	
 
     }
 

@@ -1,8 +1,10 @@
 package it.polito.tdp.borders.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
@@ -16,6 +18,7 @@ public class Model {
 	
 	public Model() {
 		this.dao= new BordersDAO();
+		this.idMapCountry= new HashMap<Integer,Country>();
 		dao.loadAllCountries(idMapCountry);
 		
 	}
@@ -35,6 +38,31 @@ public class Model {
 		}
 		
 		
+	}
+	public Map<Country, Integer> statiConfinanti() {
+		if(grafo==null)
+			throw new RuntimeException("Grafo inesistente");
+		else {
+			Map<Country,Integer> result= new HashMap<Country,Integer>();
+			for(Country c: grafo.vertexSet()) {
+				result.put(c, grafo.degreeOf(c));
+			}
+			return result;
+		}
+	}
+	public int numeroComponentiConnesse() {
+		if(grafo==null) {
+			throw new RuntimeException("Grafo inesistente");
+		}else {
+			ConnectivityInspector<Country,DefaultEdge> ci= new ConnectivityInspector<>(grafo);
+			return ci.connectedSets().size();
+		}
+	}
+	public int numVertici() {
+		return grafo.vertexSet().size();
+	}
+	public int numArchi() {
+		return grafo.edgeSet().size();
 	}
 
 }

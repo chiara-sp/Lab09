@@ -1,12 +1,17 @@
 package it.polito.tdp.borders.model;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.traverse.BreadthFirstIterator;
+import org.jgrapht.traverse.DepthFirstIterator;
+import org.jgrapht.traverse.GraphIterator;
 
 import it.polito.tdp.borders.db.BordersDAO;
 
@@ -63,6 +68,37 @@ public class Model {
 	}
 	public int numArchi() {
 		return grafo.edgeSet().size();
+	}
+	public List<Country> getCountries(){
+		List<Country> lista= new LinkedList<>(idMapCountry.values());
+		Collections.sort(lista);
+		return lista;
+	}
+	public List<Country> statiRaggiungibili(Country selectedCountry){
+		if(!grafo.vertexSet().contains(selectedCountry)) {
+			throw new RuntimeException("Stato non presente nel grafo");
+		}
+		List<Country> lista= dysplayAllReacheableCountries(selectedCountry);
+		return lista;
+	}
+	
+	//VERSIONE RICORSIVA
+	private List<Country> dysplayAllReacheableCountries(Country selectedCountry) {
+		List<Country> visited= new LinkedList<Country>();
+		
+		//versione 1: breadthIterator
+		//GraphIterator<Country,DefaultEdge> bfv= new BreadthFirstIterator<Country,DefaultEdge>(grafo,selectedCountry);
+		//while(bfv.hasNext()) {
+		//	visited.add(bfv.next());
+		//}
+		
+		//Versione 2: depthFirstIteartor
+		GraphIterator<Country,DefaultEdge> dfv= new DepthFirstIterator<Country,DefaultEdge>(grafo,selectedCountry);
+		while(dfv.hasNext()) {
+			visited.add(dfv.next());
+		}
+		
+		return visited;
 	}
 
 }
